@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Flowchart to Python — Stage 7</title>
+
+<!-- ==========================================================
+     БАГШИЙН ТОХИРУУЛГА — энд ганц мөр өөрчилнө.
+     Apps Script-ийн Web App хаягийг хашилтын дотор буулгана
+     (.../exec гэж төгсдөг). Хоосон орхивол үр дүн илгээгдэхгүй,
+     сайт хэвийн ажиллана.
+     ========================================================== -->
+<script>window.TEACHER_URL = "https://script.google.com/macros/s/AKfycbwxyQkRinzxmKZXy2MwjOS9egxpMuoU-bpntVNA9zJVzZ2zB7h4H2s35xNhPoahraLX/exec";</script>
+<style>
+:root{
+  --navy:#1A3A5C; --blue:#2E6B9E; --blue-dk:#245880;
+  --tint:#E8F1F9; --tint-2:#F4F8FC; --paper:#F4F6F8;
+  --line:#D4E2EF; --ink:#16222E; --muted:#5B7083;
+  --ok:#1E6B4F; --ok-bg:#E6F4EE; --no:#9A3324; --no-bg:#FBEBE8;
+  --radius:12px;
+  --mono:'SF Mono',Menlo,Consolas,'DejaVu Sans Mono','Liberation Mono',monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:86px}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:#fff;
+     font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%}
+
+.bar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
+.bar-in{max-width:1060px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:700;color:var(--navy);font-size:16px;letter-spacing:.2px;margin-right:auto}
+.brand span{display:block;font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);
+      color:var(--blue);background:#fff;text-decoration:none;white-space:nowrap}
+.chip:hover{background:var(--tint)}
+.chip.done{background:var(--ok-bg);border-color:#BFE0D1;color:var(--ok)}
+.lang{font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+      padding:5px 13px;border-radius:999px;border:1.5px solid var(--blue);
+      background:#fff;color:var(--blue)}
+.lang:hover{background:var(--tint)}
+.lang:focus-visible{outline:3px solid #A8CCE8;outline-offset:2px}
+.score-pill{font-weight:700;font-size:14px;padding:6px 13px;border-radius:999px;background:var(--navy);color:#fff;white-space:nowrap}
+.score-pill[hidden]{display:none}
+
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 90px}
+section{margin-top:40px;scroll-margin-top:86px}
+
+.hero{background:var(--navy);color:#fff;border-radius:0 0 var(--radius) var(--radius);padding:34px 28px 30px;margin-top:0}
+.hero .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#9FC2DD;margin:0 0 10px}
+.hero h1{margin:0;font-size:clamp(28px,5vw,42px);line-height:1.12;letter-spacing:-.4px}
+.hero p{margin:12px 0 0;max-width:62ch;color:#DCE9F4;font-size:17px}
+.hero .codes{margin-top:16px;font-size:13px;color:#9FC2DD;letter-spacing:.04em}
+
+.step{display:flex;align-items:baseline;gap:14px;margin:0 0 6px}
+.step-n{flex:none;width:38px;height:38px;border-radius:10px;background:var(--blue);color:#fff;
+        display:grid;place-items:center;font-weight:700;font-size:18px;align-self:center}
+h2{margin:0;font-size:clamp(21px,3.2vw,27px);color:var(--navy);letter-spacing:-.2px}
+.lede{margin:4px 0 18px;color:var(--muted);max-width:70ch}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--tint-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.card h3{margin:0 0 8px;font-size:17px;color:var(--navy)}
+.card p{margin:0;font-size:15.5px;color:#2C3E4F}
+.card code{font-family:var(--mono);font-size:14.5px;background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:5px}
+
+details.recap{border:1px solid var(--line);border-radius:var(--radius);background:#fff}
+details.recap>summary{cursor:pointer;padding:14px 18px;font-weight:600;color:var(--navy);
+  list-style:none;display:flex;align-items:center;gap:10px;border-radius:var(--radius)}
+details.recap>summary::-webkit-details-marker{display:none}
+details.recap>summary::before{content:"\25B8";color:var(--blue);font-size:15px}
+details.recap[open]>summary::before{content:"\25BE"}
+details.recap>summary:hover{background:var(--tint-2)}
+.recap-body{padding:4px 18px 20px}
+
+.sxs{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+@media (max-width:640px){.sxs{grid-template-columns:1fr}}
+.sxs figure{margin:0;text-align:center}
+.sxs figcaption{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+
+.task{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.task-head{background:var(--tint);padding:14px 18px;border-bottom:1px solid var(--line);font-size:16px}
+.task-head strong{color:var(--navy)}
+.task-body{padding:18px}
+.task-foot{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px;
+  padding-top:16px;border-top:1px solid var(--line)}
+.taskmsg{margin:0;font-weight:600;font-size:15.5px}
+.taskmsg.ok{color:var(--ok)}
+.taskmsg.no{color:var(--no)}
+
+.whocard{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;border:1px solid var(--line);
+  border-radius:var(--radius);background:var(--tint-2);padding:18px}
+@media (max-width:640px){.whocard{grid-template-columns:1fr}}
+.wholabel{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px}
+.whocard input[type=text]{font-family:var(--sans);font-size:17px}
+.whonote{grid-column:1/-1;margin:0;font-size:14.5px;color:var(--muted)}
+.sendmsg{margin:12px 0 0;font-weight:600;font-size:15.5px}
+.sendmsg.ok{color:var(--ok)}
+.sendmsg.no{color:var(--no)}
+
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.match{grid-template-columns:1fr}}
+.col-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;
+     padding:12px 13px;margin-bottom:8px;cursor:pointer;background:#fff;
+     border:1.5px solid var(--line);border-radius:10px;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--blue);background:var(--tint-2)}
+.opt:focus-visible{outline:3px solid #A8CCE8;outline-offset:2px}
+.opt.sel{border-color:var(--blue);background:var(--tint);box-shadow:inset 0 0 0 1px var(--blue)}
+.opt.paired{border-style:dashed;color:var(--muted);background:var(--paper)}
+.opt .mono{font-family:var(--mono);font-size:15.5px}
+.badge{flex:none;min-width:24px;height:24px;padding:0 6px;border-radius:7px;background:var(--line);
+       color:var(--navy);font-size:13px;font-weight:700;display:grid;place-items:center}
+.opt.paired .badge{background:var(--blue);color:#fff}
+.opt.right{border-color:#9ED3B8;background:var(--ok-bg)}
+.opt.wrong{border-color:#E8B4AA;background:var(--no-bg)}
+
+.conv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:760px){.conv{grid-template-columns:1fr;gap:14px}.conv figure{justify-self:center}}
+.conv figure{margin:0;text-align:center}
+.conv figcaption{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.linebox{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin-bottom:10px}
+.lineno{font-family:var(--mono);font-size:14px;color:var(--muted);white-space:nowrap}
+input[type=text]{width:100%;font-family:var(--mono);font-size:15px;padding:11px 12px;
+  border:1.5px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+input[type=text]:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px #D6E8F6}
+input.right{border-color:#9ED3B8;background:var(--ok-bg)}
+input.wrong{border-color:#E8B4AA;background:var(--no-bg)}
+.hintline{font-size:14px;margin:0 0 10px}
+.hintline.ok{color:var(--ok)}
+.hintline.no{color:var(--no)}
+.hintline code{font-family:var(--mono);background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:5px}
+.subtask{margin:0 0 12px;font-weight:600;color:var(--navy)}
+
+.btn{font:inherit;font-weight:600;cursor:pointer;border-radius:10px;padding:12px 22px;
+     background:var(--blue);color:#fff;border:1.5px solid var(--blue)}
+.btn:hover{background:var(--blue-dk);border-color:var(--blue-dk)}
+.btn:focus-visible{outline:3px solid #A8CCE8;outline-offset:2px}
+.btn.ghost{background:#fff;color:var(--blue)}
+.btn.ghost:hover{background:var(--tint)}
+.btn.big{padding:15px 30px;font-size:18px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+.result{border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:var(--radius);
+        background:var(--tint-2);padding:20px;margin-top:18px}
+.result h3{margin:0 0 4px;color:var(--navy);font-size:20px}
+.big-score{font-size:40px;font-weight:700;color:var(--navy);line-height:1.1;margin:0}
+.big-score small{font-size:17px;font-weight:500;color:var(--muted)}
+.fixlist{margin:14px 0 0;padding:0;list-style:none}
+.fixlist li{background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin-bottom:8px}
+.fixlist .where{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fixlist .was,.fixlist .now{font-family:var(--mono);font-size:14.5px;display:block;margin-top:3px}
+.fixlist .now{color:var(--ok);font-weight:600}
+.allgood{margin:12px 0 0;color:var(--ok);font-weight:600}
+
+.note{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:22px}
+.note.accent{background:var(--tint);border-color:#BFD9EC}
+.note ol{margin:0;padding-left:22px}
+.note ol li{margin:10px 0}
+.note code{font-family:var(--mono);font-size:14.5px;background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:5px}
+.pencil{display:inline-block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--navy);color:#fff;padding:4px 10px;border-radius:999px;margin-bottom:12px}
+pre.block{font-family:var(--mono);font-size:15px;background:var(--paper);border:1px solid var(--line);
+  border-radius:9px;padding:13px 14px;overflow-x:auto;margin:8px 0 0}
+
+svg.fc{display:block;max-width:100%;height:auto}
+svg.fc text{font-family:var(--mono);font-size:13px;fill:#16222E}
+svg.fc .sh{fill:#fff;stroke:#16222E;stroke-width:1.4}
+svg.fc .ar{stroke:#16222E;stroke-width:1.4;fill:none}
+
+footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="brand">From Flowchart to Python<span>Stage 7 &middot; Lesson 15</span></div>
+    <nav class="chips" aria-label="Sections">
+      <a class="chip" id="chip1" href="#t1" data-t="chip1"></a>
+      <a class="chip" id="chip2" href="#t2" data-t="chip2"></a>
+      <a class="chip" id="chip3" href="#t3" data-t="chip3"></a>
+      <a class="chip" href="#check" data-t="chipC"></a>
+    </nav>
+    <button class="lang" id="langBtn" type="button"></button>
+    <span class="score-pill" id="pill" hidden></span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Cambridge Lower Secondary Computing &middot; Stage 7</p>
+    <h1>From Flowchart to Python</h1>
+    <p data-t="heroA"></p>
+    <p data-th="heroB"></p>
+    <p class="codes">7P.02 &nbsp;|&nbsp; Unit 1.4 Introduction to text-based programming</p>
+  </header>
+
+  <!-- ============ WHO ============ -->
+  <section id="who">
+    <div class="whocard">
+      <div>
+        <label class="wholabel" for="stName" data-t="whoName"></label>
+        <input type="text" id="stName" autocomplete="off" spellcheck="false" placeholder="Bat">
+      </div>
+      <div>
+        <label class="wholabel" for="stClass" data-t="whoClass"></label>
+        <input type="text" id="stClass" autocomplete="off" spellcheck="false" placeholder="6a">
+      </div>
+      <p class="whonote" data-th="whoNote"></p>
+    </div>
+  </section>
+
+  <!-- ============ RECAP ============ -->
+  <section id="recap">
+    <div class="step"><span class="step-n" aria-hidden="true">i</span><h2 data-t="recapH"></h2></div>
+    <p class="lede" data-t="recapL"></p>
+
+    <details class="recap" open>
+      <summary data-t="recapS"></summary>
+      <div class="recap-body">
+        <div class="sxs">
+          <figure>
+            <svg class="fc" width="200" height="236" viewBox="0 0 200 236" role="img"
+                 aria-label="Flowchart: Start, Output Hello, Output Bye, End">
+              <rect class="sh" x="45" y="6" width="110" height="34" rx="17"/>
+              <text x="100" y="28" text-anchor="middle">Start</text>
+              <path class="ar" d="M100 40 V62" marker-end="url(#a1)"/>
+              <polygon class="sh" points="30,70 185,70 170,104 15,104"/>
+              <text x="100" y="92" text-anchor="middle">Output "Hello"</text>
+              <path class="ar" d="M100 104 V126" marker-end="url(#a1)"/>
+              <polygon class="sh" points="30,134 185,134 170,168 15,168"/>
+              <text x="100" y="156" text-anchor="middle">Output "Bye"</text>
+              <path class="ar" d="M100 168 V190" marker-end="url(#a1)"/>
+              <rect class="sh" x="45" y="196" width="110" height="34" rx="17"/>
+              <text x="100" y="218" text-anchor="middle">End</text>
+              <defs><marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="3.2"
+                      orient="auto"><path d="M0,0 L7,3.2 L0,6.4 z" fill="#16222E"/></marker></defs>
+            </svg>
+            <figcaption>Flowgorithm</figcaption>
+          </figure>
+          <div>
+            <pre class="block">print("Hello")
+print("Bye")</pre>
+            <div class="cards" style="margin-top:14px">
+              <div class="card">
+                <h3 data-t="recapC1H"></h3>
+                <p data-t="recapC1P"></p>
+              </div>
+              <div class="card">
+                <h3 data-t="recapC2H"></h3>
+                <p data-th="recapC2P"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ TASK 1 ============ -->
+  <section id="t1">
+    <div class="step"><span class="step-n">1</span><h2 data-t="t1H"></h2></div>
+    <p class="lede" data-t="t1L"></p>
+
+    <div class="task">
+      <div class="task-head" data-th="t1Head"></div>
+      <div class="task-body">
+        <div class="match">
+          <div><p class="col-label" data-t="colL"></p><div id="mLeft"></div></div>
+          <div><p class="col-label" data-t="colR"></p><div id="mRight"></div></div>
+        </div>
+        <div class="task-foot">
+          <button class="btn" type="button" data-check="1">Check Task 1</button>
+          <button class="btn ghost" id="mClear" type="button" data-t="clearBtn"></button>
+          <p class="taskmsg" id="tmsg1" hidden></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TASK 2 ============ -->
+  <section id="t2">
+    <div class="step"><span class="step-n">2</span><h2 data-t="t2H"></h2></div>
+    <p class="lede" data-t="t2L"></p>
+
+    <div class="task">
+      <div class="task-head" data-th="t2Head"></div>
+      <div class="task-body">
+        <div id="convBody"></div>
+        <div class="task-foot">
+          <button class="btn" type="button" data-check="2">Check Task 2</button>
+          <p class="taskmsg" id="tmsg2" hidden></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TASK 3 ============ -->
+  <section id="t3">
+    <div class="step"><span class="step-n">3</span><h2 data-t="t3H"></h2></div>
+    <p class="lede" data-t="t3L"></p>
+
+    <div class="task">
+      <div class="task-head" data-th="t3Head"></div>
+      <div class="task-body">
+        <div id="outBody"></div>
+        <div class="task-foot">
+          <button class="btn" type="button" data-check="3">Check Task 3</button>
+          <p class="taskmsg" id="tmsg3" hidden></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHECK ============ -->
+  <section id="check">
+    <div class="step"><span class="step-n" aria-hidden="true">&#10003;</span><h2 data-t="ckH"></h2></div>
+    <p class="lede" data-t="ckL"></p>
+
+    <div class="btnrow">
+      <button class="btn big" id="checkBtn" type="button">Check my work</button>
+      <button class="btn ghost" id="resetBtn" type="button" data-t="againBtn"></button>
+    </div>
+    <p class="sendmsg" id="sendMsg" hidden aria-live="polite"></p>
+
+    <div class="result" id="result" hidden aria-live="polite">
+      <h3 data-t="resH"></h3>
+      <p class="big-score"><span id="scoreNum">0</span><small> / <span id="scoreTot">9</span></small></p>
+      <p id="scoreWord" style="margin:2px 0 0;color:var(--muted)"></p>
+      <div id="fixArea"></div>
+    </div>
+  </section>
+
+
+  <!-- ============ HOMEWORK ============ -->
+  <section id="homework">
+    <div class="step"><span class="step-n" aria-hidden="true">&#8962;</span><h2>Homework</h2></div>
+    <p class="lede" data-t="hwL"></p>
+
+    <div class="note accent">
+      <span class="pencil" data-t="pencil"></span>
+      <ol>
+        <li><span data-t="hw2"></span>
+<pre class="block">Start
+Output "My name is Bat"
+Output "I am 12 years old"
+End</pre>
+        </li>
+        <li><span data-t="hw3"></span>
+<pre class="block">print("Open the door")
+print("Switch on the light")
+print("Sit down")</pre>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+
+  <footer>
+    Cambridge Lower Secondary Computing 0860 &middot; Stage 7 &middot; Unit 1.4 &middot; 7P.02.
+    <span data-t="foot"></span>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+/* ====================== UI TEXT — EN / MN ====================== */
+
+const T = {
+  en: {
+    other: 'Монгол', htmlLang: 'en',
+    chip1: '1 · Match', chip2: '2 · Write', chip3: '3 · Output', chipC: 'Check',
+    heroA: 'The same algorithm, written as text. Nothing about the thinking changes — only the way you write it down.',
+    heroB: 'Three short tasks, <strong>9 marks</strong>. Check each task as you finish it, fix anything in red, then move on.',
+    whoName: 'Your name', whoClass: 'Class',
+    whoNote: 'Fill this in first. Your teacher sees your result when you press <strong>Check my work</strong>.',
+    recapH: 'Before you start', recapL: 'Keep this open while you work.',
+    recapS: 'The same algorithm, written two ways',
+    recapC1H: 'What stays the same',
+    recapC1P: 'The steps, and the order they run in: top to bottom, one after another.',
+    recapC2H: 'What changes',
+    recapC2P: 'No symbols to drag. You type every letter, bracket and quote mark yourself — and you press <code>F5</code> to run it.',
+    t1H: 'Match them up',
+    t1L: 'Click something from Flowgorithm, then click what it becomes in Python. Clicked the wrong one? Click it again to free it.',
+    t1Head: '<strong>4 pairs.</strong> Everything on the left has one answer on the right — even when the answer is “nothing”.',
+    colL: 'In Flowgorithm', colR: 'In Python',
+    clearBtn: 'Clear all pairs',
+    t2H: 'Write the Python',
+    t2L: 'Read the flowchart and type the program — one line for each Output shape.',
+    t2Head: '<strong>One shape, one line.</strong> <code>Start</code> and <code>End</code> need no line at all. Both <code>"double"</code> and <code>\'single\'</code> quotes are accepted.',
+    t2Sub: 'Type the program',
+    t3H: 'What will it print?',
+    t3L: 'Read the program and type exactly what appears on the screen — one box for each line of output.',
+    t3Head: '<strong>Exactly as it is.</strong> Everything inside the quotes is printed just as it is written. The brackets and the quote marks are <strong>not</strong> printed.',
+    t3Sub: 'Type the output',
+    outLine: 'output line',
+    ckH: 'Check my work',
+    ckL: 'All three tasks checked? Press the button for your total. It also lists everything you got wrong along the way — write those into your exercise book, correctly.',
+    againBtn: 'Start again', resH: 'Your result',
+    hwL: 'Copy these two tasks into your exercise book now. You will do them at home.',
+    pencil: 'Write in your exercise book',
+    hw2: 'A flowchart has these shapes, from top to bottom. Write the Python program for it.',
+    hw3: 'Draw the flowchart for this Python program:',
+    foot: 'Works offline — no internet needed once the file is on your computer.',
+    allOk: n => 'All ' + n + ' correct — move on to the next task.',
+    some: (ok, n) => ok + ' out of ' + n + ' correct. Fix the ones in red, then check again.',
+    correct: 'Correct.',
+    correctLine: 'Correct line: ',
+    correctOut: 'Correct output: ',
+    notMatched: 'not matched', blank: 'left blank',
+    wFirst: 'Right first time, every one. Now try the Challenge.',
+    wNow: 'All correct now. Write the ones you had to fix into your exercise book.',
+    wFix: 'Fix the answers still marked in red, then check again.',
+    fixHead: 'You had to correct these. Write them in your exercise book:',
+    was: 'you first put: ', now: 'correct: ',
+    nothing: 'Nothing to correct — every answer right first time. Well done.',
+    sending: 'Sending…', sent: 'Sent to your teacher ✓',
+    sendFail: 'Could not send — tell your teacher.',
+    needName: 'Type your name at the top of the page, then press Check my work again.'
+  },
+  mn: {
+    other: 'English', htmlLang: 'mn',
+    chip1: '1 · Холбо', chip2: '2 · Бич', chip3: '3 · Гаралт', chipC: 'Шалга',
+    heroA: 'Нэг алгоритм, хоёр бичлэг. Санаа нь өөрчлөгдөхгүй — зөвхөн бичих хэлбэр нь өөр.',
+    heroB: 'Гурван дасгал, <strong>9 оноо</strong>. Дасгал бүрээ хийж шалга, улаан болсныг зас, дараа нь дараагийнх руу яв.',
+    whoName: 'Нэр', whoClass: 'Анги',
+    whoNote: 'Эхлээд үүнийг бич. <strong>Check my work</strong> дарахад багш үр дүнг чинь харна.',
+    recapH: 'Эхлэхээсээ өмнө', recapL: 'Ажиллах зуураа нээлттэй үлдээ.',
+    recapS: 'Нэг алгоритм, хоёр өөр бичлэг',
+    recapC1H: 'Юу хэвээр үлдэх вэ',
+    recapC1P: 'Үйлдлүүд ба тэдний дараалал: дээрээс доош, нэг нэгээр.',
+    recapC2H: 'Юу өөрчлөгдөх вэ',
+    recapC2P: 'Дүрс чирэхгүй. Үсэг, хаалт, хашилт бүрийг өөрөө шивнэ — ажиллуулахдаа <code>F5</code> дарна.',
+    t1H: 'Хос болгон холбо',
+    t1L: 'Flowgorithm талаас нэгийг дар, дараа нь Python талаас тохирохыг дар. Буруу холбосон бол дээр нь дахин дарж сална.',
+    t1Head: '<strong>4 хос.</strong> Зүүн талын бүх зүйлд баруун талд нэг хариу бий — хариу нь «хэрэггүй» байсан ч.',
+    colL: 'Flowgorithm дээр', colR: 'Python дээр',
+    clearBtn: 'Бүх хосыг цэвэрлэ',
+    t2H: 'Python-оор бич',
+    t2L: 'Flowchart-ыг хараад программыг бич — Output дүрс бүрд нэг мөр.',
+    t2Head: '<strong>Нэг дүрс, нэг мөр.</strong> <code>Start</code> ба <code>End</code>-д мөр бичихгүй. <code>"Хос"</code> ба <code>\'нэг\'</code> хашилт хоёулаа тохирно.',
+    t2Sub: 'Программыг бич',
+    t3H: 'Юу хэвлэгдэх вэ?',
+    t3L: 'Программыг хараад дэлгэцэнд яг юу гарахыг бич — гаралтын мөр бүрд нэг хайрцаг.',
+    t3Head: '<strong>Яг тэр хэвээрээ.</strong> Хашилтан дотор байгаа бүхэн бичигдсэн хэвээрээ хэвлэгдэнэ. Хаалт, хашилт <strong>хэвлэгдэхгүй</strong>.',
+    t3Sub: 'Гаралтыг бич',
+    outLine: 'гаралтын мөр',
+    ckH: 'Ажлаа шалга',
+    ckL: 'Гурван дасгалаа шалгасан уу? Товчийг дарж нийт оноогоо хар. Замдаа алдсан бүхнийг бас жагсаана — тэднийг дэвтэртээ зөвөөр бич.',
+    againBtn: 'Дахин эхэл', resH: 'Таны үр дүн',
+    hwL: 'Хоёр даалгаврыг одоо дэвтэртээ хуулж ав. Гэртээ дэвтэр дээрээ хийнэ.',
+    pencil: 'Дэвтэртээ бич',
+    hw2: 'Flowchart-д дээрээс доош дараах дүрсүүд байна. Үүний Python программыг бич.',
+    hw3: 'Дараах Python программын flowchart-ыг зур:',
+    foot: 'Интернэтгүй ажиллана — файл компьютер дээр байхад хангалттай.',
+    allOk: n => n + '-ээс ' + n + ' зөв — дараагийн дасгал руу яв.',
+    some: (ok, n) => n + '-ээс ' + ok + ' зөв. Улаанаар тэмдэглэснийг зас, дараа нь дахин шалга.',
+    correct: 'Зөв.',
+    correctLine: 'Зөв мөр: ',
+    correctOut: 'Зөв гаралт: ',
+    notMatched: 'холбоогүй', blank: 'хоосон',
+    wFirst: 'Бүгдийг эхний оролдлогоор зөв хийлээ. Одоо Challenge-ийг хий.',
+    wNow: 'Одоо бүгд зөв. Засах шаардлагатай болсон зүйлсээ дэвтэртээ бич.',
+    wFix: 'Улаанаар тэмдэглэгдсэн хариултуудыг зас, дараа нь дахин шалга.',
+    fixHead: 'Эдгээрийг засах шаардлага гарсан. Дэвтэртээ бич:',
+    was: 'эхэндээ бичсэн: ', now: 'зөв: ',
+    nothing: 'Засах зүйл байхгүй — бүгдийг эхний оролдлогоор зөв хийжээ.',
+    sending: 'Илгээж байна…', sent: 'Багшид илгээгдлээ ✓',
+    sendFail: 'Илгээж чадсангүй — багшдаа хэл.',
+    needName: 'Хуудасны дээд талд нэрээ бич, дараа нь Check my work-ийг дахин дар.'
+  }
+};
+
+let lang = 'en';
+const t = k => T[lang][k];
+
+/* ====================== TASK DATA ====================== */
+
+/* 1 — the mapping, straight from the lesson's table. */
+const MATCH = [
+  { l: { en: 'The Start and End ovals',             mn: 'Start ба End зууван дүрс' },
+    r: { en: 'No line at all',                      mn: 'Тусгай мөр хэрэггүй' } },
+  { l: { en: 'An Output shape',                     mn: 'Output дүрс' },
+    r: { code: 'print("…")' } },
+  { l: { en: 'The arrow down to the next shape',    mn: 'Дараагийн дүрс руу чиглэсэн сум' },
+    r: { en: 'The next line down',                  mn: 'Доорх дараагийн мөр' } },
+  { l: { en: 'Clicking the green run arrow',        mn: 'Ногоон сум дарж ажиллуулах' },
+    r: { code: 'F5' } }
+];
+
+/* 2 — one flowchart, three Output shapes. */
+const CONV = {
+  shapes: ['Hello World!', 'I am in Stage 7', 'Goodbye'],
+  answers: ['print("Hello World!")', 'print("I am in Stage 7")', 'print("Goodbye")']
+};
+
+/* 3 — predict the output. */
+const OUT = {
+  code: ['print("My first program")', 'print("2026")'],
+  answers: ['My first program', '2026']
+};
+
+const STORE = 'f2p15-v2';
+
+/* Keys in the order the results sheet expects them. */
+const ITEM_KEYS = MATCH.map((_, i) => 'm' + i)
+  .concat(CONV.answers.map((_, i) => 'c' + i))
+  .concat(OUT.answers.map((_, i) => 'o' + i));
+const TOTAL = MATCH.length + CONV.answers.length + OUT.answers.length;
+
+/* ====================== HELPERS ====================== */
+
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+}
+
+/* The visible text of a match item in the current language. */
+function mtext(o) { return o.code !== undefined ? o.code : o[lang]; }
+function mclass(o) { return o.code !== undefined ? 'mono' : ''; }
+
+function shuffled(a) {
+  const x = a.slice();
+  for (let i = x.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [x[i], x[j]] = [x[j], x[i]];
+  }
+  return x;
+}
+
+/* Canonical Python line: whitespace outside strings dropped, quotes normalised. */
+function canon(s) {
+  s = String(s).trim();
+  let out = '', inStr = false, q = '';
+  for (const c of s) {
+    if (inStr) { if (c === q) { inStr = false; out += '"'; } else out += c; }
+    else if (c === '"' || c === "'") { inStr = true; q = c; out += '"'; }
+    else if (!/\s/.test(c)) out += c;
+  }
+  return out;
+}
+
+/* Output text: only the outer spaces and double spaces are forgiven. */
+function canonOut(s) { return String(s).trim().replace(/\s+/g, ' '); }
+
+/* Build a Start / Output… / End flowchart as inline SVG. */
+function chartSVG(id, labels) {
+  const longest = labels.reduce((n, x) => Math.max(n, x.length + 9), 0);
+  const W = Math.max(230, Math.ceil(longest * 7.9 + 52));
+  const PAD = 8, OVW = 110, OVH = 34, BOXH = 34, GAP = 22;
+  const H = PAD + OVH + GAP + labels.length * (BOXH + GAP) + OVH + PAD;
+  let y = PAD, p = [];
+  const mid = W / 2;
+
+  p.push('<rect class="sh" x="' + (mid - OVW / 2) + '" y="' + y + '" width="' + OVW + '" height="' + OVH + '" rx="17"/>');
+  p.push('<text x="' + mid + '" y="' + (y + 22) + '" text-anchor="middle">Start</text>');
+  y += OVH;
+
+  labels.forEach(x => {
+    p.push('<path class="ar" d="M' + mid + ' ' + y + ' V' + (y + GAP) + '" marker-end="url(#' + id + 'a)"/>');
+    y += GAP;
+    p.push('<polygon class="sh" points="20,' + y + ' ' + (W - 12) + ',' + y + ' ' + (W - 27) + ',' + (y + BOXH) + ' 5,' + (y + BOXH) + '"/>');
+    p.push('<text x="' + mid + '" y="' + (y + 22) + '" text-anchor="middle">Output "' + esc(x) + '"</text>');
+    y += BOXH;
+  });
+
+  p.push('<path class="ar" d="M' + mid + ' ' + y + ' V' + (y + GAP) + '" marker-end="url(#' + id + 'a)"/>');
+  y += GAP;
+  p.push('<rect class="sh" x="' + (mid - OVW / 2) + '" y="' + y + '" width="' + OVW + '" height="' + OVH + '" rx="17"/>');
+  p.push('<text x="' + mid + '" y="' + (y + 22) + '" text-anchor="middle">End</text>');
+
+  return '<svg class="fc" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" ' +
+    'aria-label="Flowchart printing ' + esc(labels.join(', then ')) + '">' +
+    '<defs><marker id="' + id + 'a" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">' +
+    '<path d="M0,0 L7,3.2 L0,6.4 z" fill="#16222E"/></marker></defs>' + p.join('') + '</svg>';
+}
+
+/* ====================== STATE ====================== */
+
+const state = { pairs: {}, sel: null };
+let missed = {};                 /* first wrong answer per item — never overwritten */
+let rightOrder = null;           /* the shuffle of the right-hand column */
+let checked = { 1: false, 2: false, 3: false };
+let lastScore = null;
+
+/* A miss is stored by reference, never as finished text, so the correction
+   list follows the language switch like everything else. */
+function noteMiss(key, rec) { if (!missed[key]) missed[key] = rec; }
+
+function missText(r) {
+  if (r.k === 'm') return {
+    where: 'Task 1 · ' + mtext(MATCH[r.i].l),
+    was: (r.w === null || r.w === undefined) ? t('notMatched') : mtext(MATCH[r.w].r),
+    now: mtext(MATCH[r.i].l) + '  →  ' + mtext(MATCH[r.i].r)
+  };
+  if (r.k === 'c') return {
+    where: 'Task 2 · line ' + (r.i + 1),
+    was: r.w || t('blank'),
+    now: CONV.answers[r.i]
+  };
+  return {
+    where: 'Task 3 · ' + t('outLine') + ' ' + (r.i + 1),
+    was: r.w || t('blank'),
+    now: OUT.answers[r.i]
+  };
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORE, JSON.stringify({
+      lang: lang,
+      pairs: state.pairs,
+      order: rightOrder,
+      conv: CONV.answers.map((_, i) => ($('#c' + i) || {}).value || ''),
+      out: OUT.answers.map((_, i) => ($('#o' + i) || {}).value || ''),
+      missed: missed,
+      who: { n: $('#stName').value, k: $('#stClass').value }
+    }));
+  } catch (e) {}
+}
+function load() {
+  try { const r = localStorage.getItem(STORE); return r ? JSON.parse(r) : null; }
+  catch (e) { return null; }
+}
+
+/* ====================== TASK 1 — MATCH ====================== */
+
+function buildMatch() {
+  $('#mLeft').innerHTML = MATCH.map((m, i) =>
+    '<button type="button" class="opt" data-side="L" data-i="' + i + '">' +
+    '<span class="badge" data-badge>' + (i + 1) + '</span>' +
+    '<span class="' + mclass(m.l) + '" data-label>' + esc(mtext(m.l)) + '</span></button>').join('');
+
+  $('#mRight').innerHTML = rightOrder.map(i =>
+    '<button type="button" class="opt" data-side="R" data-i="' + i + '">' +
+    '<span class="badge" data-badge>·</span>' +
+    '<span class="' + mclass(MATCH[i].r) + '" data-label>' + esc(mtext(MATCH[i].r)) + '</span></button>').join('');
+
+  $$('#mLeft .opt, #mRight .opt').forEach(b => b.addEventListener('click', () => clickOpt(b)));
+  paintMatch();
+}
+
+function relabelMatch() {
+  $$('#mLeft .opt').forEach(b => {
+    const o = MATCH[Number(b.dataset.i)].l;
+    const s = $('[data-label]', b);
+    s.textContent = mtext(o); s.className = mclass(o);
+  });
+  $$('#mRight .opt').forEach(b => {
+    const o = MATCH[Number(b.dataset.i)].r;
+    const s = $('[data-label]', b);
+    s.textContent = mtext(o); s.className = mclass(o);
+  });
+}
+
+function clickOpt(btn) {
+  const side = btn.dataset.side, i = Number(btn.dataset.i);
+  const sel = state.sel;
+
+  if (sel && sel.side !== side) {
+    const left  = sel.side === 'L' ? sel.i : i;
+    const right = sel.side === 'R' ? sel.i : i;
+    Object.keys(state.pairs).forEach(k => { if (state.pairs[k] === right) delete state.pairs[k]; });
+    state.pairs[left] = right;
+    state.sel = null; paintMatch(); save(); return;
+  }
+
+  /* clicking the current selection again lets it go */
+  if (sel && sel.side === side && sel.i === i) {
+    state.sel = null; paintMatch(); return;
+  }
+
+  /* clicking a matched item frees it and picks it up, ready to re-match */
+  const owner = side === 'L'
+    ? (state.pairs[i] !== undefined ? i : undefined)
+    : Object.keys(state.pairs).map(Number).find(k => state.pairs[k] === i);
+  if (owner !== undefined) { delete state.pairs[owner]; save(); }
+
+  state.sel = { side, i };
+  paintMatch();
+}
+
+function paintMatch(showMarks) {
+  const nums = {};
+  Object.keys(state.pairs).map(Number).sort((a, b) => a - b)
+        .forEach((l, n) => { nums[l] = n + 1; });
+
+  $$('#mLeft .opt').forEach(b => {
+    const i = Number(b.dataset.i), has = state.pairs[i] !== undefined;
+    b.className = 'opt' + (has ? ' paired' : '') +
+      (state.sel && state.sel.side === 'L' && state.sel.i === i ? ' sel' : '');
+    $('[data-badge]', b).textContent = has ? nums[i] : (i + 1);
+    if (showMarks && has) b.classList.add(state.pairs[i] === i ? 'right' : 'wrong');
+  });
+
+  $$('#mRight .opt').forEach(b => {
+    const i = Number(b.dataset.i);
+    const owner = Object.keys(state.pairs).map(Number).find(k => state.pairs[k] === i);
+    const has = owner !== undefined;
+    b.className = 'opt' + (has ? ' paired' : '') +
+      (state.sel && state.sel.side === 'R' && state.sel.i === i ? ' sel' : '');
+    $('[data-badge]', b).textContent = has ? nums[owner] : '·';
+    if (showMarks && has) b.classList.add(owner === i ? 'right' : 'wrong');
+  });
+
+  touch();
+}
+
+/* ====================== TASK 2 — WRITE THE PYTHON ====================== */
+
+function buildConv() {
+  $('#convBody').innerHTML =
+    '<div class="conv">' +
+      '<figure>' + chartSVG('cA', CONV.shapes) + '<figcaption>Flowgorithm</figcaption></figure>' +
+      '<div>' +
+        '<p class="subtask" data-t="t2Sub"></p>' +
+        CONV.answers.map((_, i) =>
+          '<div class="linebox"><span class="lineno">line ' + (i + 1) + '</span>' +
+          '<input type="text" id="c' + i + '" spellcheck="false" autocapitalize="off" ' +
+          'autocomplete="off" placeholder="print(…)" aria-label="Python line ' + (i + 1) + '"></div>' +
+          '<p class="hintline" id="cmsg' + i + '" hidden></p>').join('') +
+      '</div>' +
+    '</div>';
+
+  CONV.answers.forEach((_, i) => {
+    $('#c' + i).addEventListener('input', () => {
+      $('#c' + i).classList.remove('right', 'wrong');
+      $('#cmsg' + i).hidden = true;
+      touch(); save();
+    });
+  });
+}
+
+/* ====================== TASK 3 — PREDICT THE OUTPUT ====================== */
+
+function buildOut() {
+  $('#outBody').innerHTML =
+    '<div class="conv">' +
+      '<figure style="text-align:left"><pre class="block" style="margin:0">' +
+        OUT.code.map(esc).join('\n') + '</pre><figcaption>Python</figcaption></figure>' +
+      '<div>' +
+        '<p class="subtask" data-t="t3Sub"></p>' +
+        OUT.answers.map((_, i) =>
+          '<div class="linebox"><span class="lineno" data-outline>' + (i + 1) + '</span>' +
+          '<input type="text" id="o' + i + '" spellcheck="false" autocapitalize="off" ' +
+          'autocomplete="off" aria-label="Output line ' + (i + 1) + '"></div>' +
+          '<p class="hintline" id="omsg' + i + '" hidden></p>').join('') +
+      '</div>' +
+    '</div>';
+
+  OUT.answers.forEach((_, i) => {
+    $('#o' + i).addEventListener('input', () => {
+      $('#o' + i).classList.remove('right', 'wrong');
+      $('#omsg' + i).hidden = true;
+      touch(); save();
+    });
+  });
+}
+
+/* ====================== PROGRESS ====================== */
+
+function touch() {
+  const d1 = Object.keys(state.pairs).length === MATCH.length;
+  const d2 = CONV.answers.every((_, i) => { const e = $('#c' + i); return e && e.value.trim(); });
+  const d3 = OUT.answers.every((_, i) => { const e = $('#o' + i); return e && e.value.trim(); });
+  $('#chip1').classList.toggle('done', d1);
+  $('#chip2').classList.toggle('done', !!d2);
+  $('#chip3').classList.toggle('done', !!d3);
+}
+
+/* ====================== CHECKING ====================== */
+
+function checkTask1() {
+  let ok = 0;
+  paintMatch(true);
+  MATCH.forEach((m, i) => {
+    const picked = state.pairs[i];
+    if (picked === i) ok++;
+    else noteMiss('m' + i, { k: 'm', i: i, w: picked === undefined ? null : picked });
+  });
+  return { ok: ok, total: MATCH.length };
+}
+
+function checkTask2() {
+  let ok = 0;
+  CONV.answers.forEach((ans, i) => {
+    const el = $('#c' + i), msg = $('#cmsg' + i);
+    const given = el.value.trim();
+    const good = !!given && canon(given) === canon(ans);
+    el.classList.toggle('right', good);
+    el.classList.toggle('wrong', !good);
+    msg.hidden = false;
+    msg.className = 'hintline ' + (good ? 'ok' : 'no');
+    msg.innerHTML = good ? t('correct') : t('correctLine') + '<code>' + esc(ans) + '</code>';
+    if (good) ok++;
+    else noteMiss('c' + i, { k: 'c', i: i, w: given || null });
+  });
+  return { ok: ok, total: CONV.answers.length };
+}
+
+function checkTask3() {
+  let ok = 0;
+  OUT.answers.forEach((ans, i) => {
+    const el = $('#o' + i), msg = $('#omsg' + i);
+    const given = el.value.trim();
+    const good = !!given && canonOut(given) === canonOut(ans);
+    el.classList.toggle('right', good);
+    el.classList.toggle('wrong', !good);
+    msg.hidden = false;
+    msg.className = 'hintline ' + (good ? 'ok' : 'no');
+    msg.innerHTML = good ? t('correct') : t('correctOut') + '<code>' + esc(ans) + '</code>';
+    if (good) ok++;
+    else noteMiss('o' + i, { k: 'o', i: i, w: given || null });
+  });
+  return { ok: ok, total: OUT.answers.length };
+}
+
+const CHECKERS = { 1: checkTask1, 2: checkTask2, 3: checkTask3 };
+
+function runTask(n) {
+  const r = CHECKERS[n]();
+  const el = $('#tmsg' + n);
+  el.hidden = false;
+  el.className = 'taskmsg ' + (r.ok === r.total ? 'ok' : 'no');
+  el.textContent = r.ok === r.total ? t('allOk')(r.total) : t('some')(r.ok, r.total);
+  checked[n] = true;
+  save();
+  return r;
+}
+
+/* ====================== RESULT ====================== */
+
+function paintResult(score) {
+  const todo = ITEM_KEYS.filter(k => missed[k]).map(k => missText(missed[k]));
+  $('#scoreNum').textContent = score;
+  $('#scoreWord').textContent = (score === TOTAL && todo.length === 0) ? t('wFirst')
+    : score === TOTAL ? t('wNow') : t('wFix');
+
+  $('#fixArea').innerHTML = todo.length === 0
+    ? '<p class="allgood">' + t('nothing') + '</p>'
+    : '<p style="margin:14px 0 0"><strong>' + t('fixHead') + '</strong></p><ul class="fixlist">' +
+      todo.map(x => '<li><span class="where">' + esc(x.where) + '</span>' +
+        '<span class="was">' + t('was') + esc(x.was) + '</span>' +
+        '<span class="now">' + t('now') + esc(x.now) + '</span></li>').join('') + '</ul>';
+
+  $('#result').hidden = false;
+  $('#pill').hidden = false;
+  $('#pill').textContent = score + ' / ' + TOTAL;
+}
+
+/* ====================== SEND TO THE TEACHER ====================== */
+
+function sendResult(score) {
+  const url = String(window.TEACHER_URL || '').trim();
+  const box = $('#sendMsg');
+  if (!url) { box.hidden = true; return; }          /* not set up — stay silent */
+
+  const name = $('#stName').value.trim();
+  if (!name) {
+    box.hidden = false; box.className = 'sendmsg no'; box.textContent = t('needName');
+    return;
+  }
+
+  const payload = JSON.stringify({
+    name: name,
+    klass: $('#stClass').value.trim(),
+    score: score,
+    max: TOTAL,
+    first: ITEM_KEYS.map(k => missed[k] ? 0 : 1)
+  });
+
+  box.hidden = false; box.className = 'sendmsg'; box.textContent = t('sending');
+  const done = () => { box.className = 'sendmsg ok'; box.textContent = t('sent'); };
+  const failed = () => { box.className = 'sendmsg no'; box.textContent = t('sendFail'); };
+
+  /* plain-text body keeps it a simple request, so no preflight is needed */
+  fetch(url, { method: 'POST', body: payload })
+    .then(done)
+    .catch(() => fetch(url, { method: 'POST', mode: 'no-cors', body: payload })
+      .then(done).catch(failed));
+}
+
+function check() {
+  const a = runTask(1), b = runTask(2), c = runTask(3);
+  lastScore = a.ok + b.ok + c.ok;
+  paintResult(lastScore);
+  sendResult(lastScore);
+  $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ====================== RESET ====================== */
+
+function reset() {
+  state.pairs = {}; state.sel = null; missed = {};
+  checked = { 1: false, 2: false, 3: false }; lastScore = null;
+  [1, 2, 3].forEach(n => { $('#tmsg' + n).hidden = true; });
+  CONV.answers.forEach((_, i) => {
+    $('#c' + i).value = ''; $('#c' + i).classList.remove('right', 'wrong');
+    $('#cmsg' + i).hidden = true;
+  });
+  OUT.answers.forEach((_, i) => {
+    $('#o' + i).value = ''; $('#o' + i).classList.remove('right', 'wrong');
+    $('#omsg' + i).hidden = true;
+  });
+  $('#result').hidden = true;
+  $('#pill').hidden = true;
+  $('#sendMsg').hidden = true;
+  paintMatch();
+  try { localStorage.removeItem(STORE); } catch (e) {}
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ====================== LANGUAGE ====================== */
+
+function applyLang() {
+  document.documentElement.lang = t('htmlLang');
+  $$('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  $$('[data-th]').forEach(el => { el.innerHTML = t(el.dataset.th); });
+  $$('[data-outline]').forEach((el, i) => { el.textContent = t('outLine') + ' ' + (i + 1); });
+  $('#langBtn').textContent = t('other');
+  relabelMatch();
+  [1, 2, 3].forEach(n => { if (checked[n]) runTask(n); });   /* re-text the feedback */
+  if (lastScore !== null) paintResult(lastScore);
+  save();
+}
+
+/* ====================== GO ====================== */
+
+const saved = load();
+if (saved && saved.lang && T[saved.lang]) lang = saved.lang;
+rightOrder = (saved && Array.isArray(saved.order) && saved.order.length === MATCH.length)
+  ? saved.order : shuffled(MATCH.map((_, i) => i));
+if (saved && saved.missed) missed = saved.missed;
+if (saved && saved.pairs) state.pairs = saved.pairs;
+
+$('#scoreTot').textContent = TOTAL;
+buildMatch();
+buildConv();
+buildOut();
+
+if (saved) {
+  if (saved.who) { $('#stName').value = saved.who.n || ''; $('#stClass').value = saved.who.k || ''; }
+  if (saved.conv) saved.conv.forEach((v, i) => { if ($('#c' + i) && v) $('#c' + i).value = v; });
+  if (saved.out)  saved.out.forEach((v, i) => { if ($('#o' + i) && v) $('#o' + i).value = v; });
+}
+
+applyLang();
+touch();
+
+['#stName', '#stClass'].forEach(s => $(s).addEventListener('input', save));
+$('#mClear').addEventListener('click', () => {
+  state.pairs = {}; state.sel = null; paintMatch(); save();
+});
+$$('[data-check]').forEach(b =>
+  b.addEventListener('click', () => runTask(Number(b.dataset.check))));
+$('#checkBtn').addEventListener('click', check);
+$('#resetBtn').addEventListener('click', reset);
+$('#langBtn').addEventListener('click', () => {
+  lang = (lang === 'en') ? 'mn' : 'en';
+  applyLang();
+});
+</script>
+</body>
+</html>
