@@ -59,26 +59,6 @@ section{margin-top:40px;scroll-margin-top:86px}
 h2{margin:0;font-size:clamp(21px,3.2vw,27px);color:var(--navy);letter-spacing:-.2px}
 .lede{margin:4px 0 18px;color:var(--muted);max-width:70ch}
 
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.card{background:var(--tint-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
-.card h3{margin:0 0 8px;font-size:17px;color:var(--navy)}
-.card p{margin:0;font-size:15.5px;color:#2C3E4F}
-.card code{font-family:var(--mono);font-size:14.5px;background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:5px}
-
-details.recap{border:1px solid var(--line);border-radius:var(--radius);background:#fff}
-details.recap>summary{cursor:pointer;padding:14px 18px;font-weight:600;color:var(--navy);
-  list-style:none;display:flex;align-items:center;gap:10px;border-radius:var(--radius)}
-details.recap>summary::-webkit-details-marker{display:none}
-details.recap>summary::before{content:"\25B8";color:var(--blue);font-size:15px}
-details.recap[open]>summary::before{content:"\25BE"}
-details.recap>summary:hover{background:var(--tint-2)}
-.recap-body{padding:4px 18px 20px}
-
-.sxs{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
-@media (max-width:640px){.sxs{grid-template-columns:1fr}}
-.sxs figure{margin:0;text-align:center}
-.sxs figcaption{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
-
 .task{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
 .task-head{background:var(--tint);padding:14px 18px;border-bottom:1px solid var(--line);font-size:16px}
 .task-head strong{color:var(--navy)}
@@ -155,13 +135,6 @@ input.wrong{border-color:#E8B4AA;background:var(--no-bg)}
 .fixlist .now{color:var(--ok);font-weight:600}
 .allgood{margin:12px 0 0;color:var(--ok);font-weight:600}
 
-.note{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:22px}
-.note.accent{background:var(--tint);border-color:#BFD9EC}
-.note ol{margin:0;padding-left:22px}
-.note ol li{margin:10px 0}
-.note code{font-family:var(--mono);font-size:14.5px;background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:5px}
-.pencil{display:inline-block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  background:var(--navy);color:#fff;padding:4px 10px;border-radius:999px;margin-bottom:12px}
 pre.block{font-family:var(--mono);font-size:15px;background:var(--paper);border:1px solid var(--line);
   border-radius:9px;padding:13px 14px;overflow-x:auto;margin:8px 0 0}
 
@@ -212,53 +185,6 @@ footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);color:v
       </div>
       <p class="whonote" data-th="whoNote"></p>
     </div>
-  </section>
-
-  <!-- ============ RECAP ============ -->
-  <section id="recap">
-    <div class="step"><span class="step-n" aria-hidden="true">i</span><h2 data-t="recapH"></h2></div>
-    <p class="lede" data-t="recapL"></p>
-
-    <details class="recap" open>
-      <summary data-t="recapS"></summary>
-      <div class="recap-body">
-        <div class="sxs">
-          <figure>
-            <svg class="fc" width="200" height="236" viewBox="0 0 200 236" role="img"
-                 aria-label="Flowchart: Start, Output Hello, Output Bye, End">
-              <rect class="sh" x="45" y="6" width="110" height="34" rx="17"/>
-              <text x="100" y="28" text-anchor="middle">Start</text>
-              <path class="ar" d="M100 40 V62" marker-end="url(#a1)"/>
-              <polygon class="sh" points="30,70 185,70 170,104 15,104"/>
-              <text x="100" y="92" text-anchor="middle">Output "Hello"</text>
-              <path class="ar" d="M100 104 V126" marker-end="url(#a1)"/>
-              <polygon class="sh" points="30,134 185,134 170,168 15,168"/>
-              <text x="100" y="156" text-anchor="middle">Output "Bye"</text>
-              <path class="ar" d="M100 168 V190" marker-end="url(#a1)"/>
-              <rect class="sh" x="45" y="196" width="110" height="34" rx="17"/>
-              <text x="100" y="218" text-anchor="middle">End</text>
-              <defs><marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="3.2"
-                      orient="auto"><path d="M0,0 L7,3.2 L0,6.4 z" fill="#16222E"/></marker></defs>
-            </svg>
-            <figcaption>Flowgorithm</figcaption>
-          </figure>
-          <div>
-            <pre class="block">print("Hello")
-print("Bye")</pre>
-            <div class="cards" style="margin-top:14px">
-              <div class="card">
-                <h3 data-t="recapC1H"></h3>
-                <p data-t="recapC1P"></p>
-              </div>
-              <div class="card">
-                <h3 data-t="recapC2H"></h3>
-                <p data-th="recapC2P"></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </details>
   </section>
 
   <!-- ============ TASK 1 ============ -->
@@ -335,31 +261,6 @@ print("Bye")</pre>
     </div>
   </section>
 
-
-  <!-- ============ HOMEWORK ============ -->
-  <section id="homework">
-    <div class="step"><span class="step-n" aria-hidden="true">&#8962;</span><h2>Homework</h2></div>
-    <p class="lede" data-t="hwL"></p>
-
-    <div class="note accent">
-      <span class="pencil" data-t="pencil"></span>
-      <ol>
-        <li><span data-t="hw2"></span>
-<pre class="block">Start
-Output "My name is Bat"
-Output "I am 12 years old"
-End</pre>
-        </li>
-        <li><span data-t="hw3"></span>
-<pre class="block">print("Open the door")
-print("Switch on the light")
-print("Sit down")</pre>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-
   <footer>
     Cambridge Lower Secondary Computing 0860 &middot; Stage 7 &middot; Unit 1.4 &middot; 7P.02.
     <span data-t="foot"></span>
@@ -379,12 +280,7 @@ const T = {
     heroB: 'Three short tasks, <strong>9 marks</strong>. Check each task as you finish it, fix anything in red, then move on.',
     whoName: 'Your name', whoClass: 'Class',
     whoNote: 'Fill this in first. Your teacher sees your result when you press <strong>Check my work</strong>.',
-    recapH: 'Before you start', recapL: 'Keep this open while you work.',
-    recapS: 'The same algorithm, written two ways',
-    recapC1H: 'What stays the same',
-    recapC1P: 'The steps, and the order they run in: top to bottom, one after another.',
-    recapC2H: 'What changes',
-    recapC2P: 'No symbols to drag. You type every letter, bracket and quote mark yourself — and you press <code>F5</code> to run it.',
+
     t1H: 'Match them up',
     t1L: 'Click something from Flowgorithm, then click what it becomes in Python. Clicked the wrong one? Click it again to free it.',
     t1Head: '<strong>4 pairs.</strong> Everything on the left has one answer on the right — even when the answer is “nothing”.',
@@ -402,10 +298,7 @@ const T = {
     ckH: 'Check my work',
     ckL: 'All three tasks checked? Press the button for your total. It also lists everything you got wrong along the way — write those into your exercise book, correctly.',
     againBtn: 'Start again', resH: 'Your result',
-    hwL: 'Copy these two tasks into your exercise book now. You will do them at home.',
-    pencil: 'Write in your exercise book',
-    hw2: 'A flowchart has these shapes, from top to bottom. Write the Python program for it.',
-    hw3: 'Draw the flowchart for this Python program:',
+
     foot: 'Works offline — no internet needed once the file is on your computer.',
     allOk: n => 'All ' + n + ' correct — move on to the next task.',
     some: (ok, n) => ok + ' out of ' + n + ' correct. Fix the ones in red, then check again.',
@@ -413,12 +306,12 @@ const T = {
     correctLine: 'Correct line: ',
     correctOut: 'Correct output: ',
     notMatched: 'not matched', blank: 'left blank',
-    wFirst: 'Right first time, every one. Now try the Challenge.',
+    wFirst: 'Right first time, every one.',
     wNow: 'All correct now. Write the ones you had to fix into your exercise book.',
     wFix: 'Fix the answers still marked in red, then check again.',
     fixHead: 'You had to correct these. Write them in your exercise book:',
     was: 'you first put: ', now: 'correct: ',
-    nothing: 'Nothing to correct — every answer right first time. Well done.',
+    nothing: 'Nothing to write in your exercise book — well done.',
     sending: 'Sending…', sent: 'Sent to your teacher ✓',
     sendFail: 'Could not send — tell your teacher.',
     needName: 'Type your name at the top of the page, then press Check my work again.'
@@ -430,12 +323,7 @@ const T = {
     heroB: 'Гурван дасгал, <strong>9 оноо</strong>. Дасгал бүрээ хийж шалга, улаан болсныг зас, дараа нь дараагийнх руу яв.',
     whoName: 'Нэр', whoClass: 'Анги',
     whoNote: 'Эхлээд үүнийг бич. <strong>Check my work</strong> дарахад багш үр дүнг чинь харна.',
-    recapH: 'Эхлэхээсээ өмнө', recapL: 'Ажиллах зуураа нээлттэй үлдээ.',
-    recapS: 'Нэг алгоритм, хоёр өөр бичлэг',
-    recapC1H: 'Юу хэвээр үлдэх вэ',
-    recapC1P: 'Үйлдлүүд ба тэдний дараалал: дээрээс доош, нэг нэгээр.',
-    recapC2H: 'Юу өөрчлөгдөх вэ',
-    recapC2P: 'Дүрс чирэхгүй. Үсэг, хаалт, хашилт бүрийг өөрөө шивнэ — ажиллуулахдаа <code>F5</code> дарна.',
+
     t1H: 'Хос болгон холбо',
     t1L: 'Flowgorithm талаас нэгийг дар, дараа нь Python талаас тохирохыг дар. Буруу холбосон бол дээр нь дахин дарж сална.',
     t1Head: '<strong>4 хос.</strong> Зүүн талын бүх зүйлд баруун талд нэг хариу бий — хариу нь «хэрэггүй» байсан ч.',
@@ -453,10 +341,7 @@ const T = {
     ckH: 'Ажлаа шалга',
     ckL: 'Гурван дасгалаа шалгасан уу? Товчийг дарж нийт оноогоо хар. Замдаа алдсан бүхнийг бас жагсаана — тэднийг дэвтэртээ зөвөөр бич.',
     againBtn: 'Дахин эхэл', resH: 'Таны үр дүн',
-    hwL: 'Хоёр даалгаврыг одоо дэвтэртээ хуулж ав. Гэртээ дэвтэр дээрээ хийнэ.',
-    pencil: 'Дэвтэртээ бич',
-    hw2: 'Flowchart-д дээрээс доош дараах дүрсүүд байна. Үүний Python программыг бич.',
-    hw3: 'Дараах Python программын flowchart-ыг зур:',
+
     foot: 'Интернэтгүй ажиллана — файл компьютер дээр байхад хангалттай.',
     allOk: n => n + '-ээс ' + n + ' зөв — дараагийн дасгал руу яв.',
     some: (ok, n) => n + '-ээс ' + ok + ' зөв. Улаанаар тэмдэглэснийг зас, дараа нь дахин шалга.',
@@ -464,12 +349,12 @@ const T = {
     correctLine: 'Зөв мөр: ',
     correctOut: 'Зөв гаралт: ',
     notMatched: 'холбоогүй', blank: 'хоосон',
-    wFirst: 'Бүгдийг эхний оролдлогоор зөв хийлээ. Одоо Challenge-ийг хий.',
+    wFirst: 'Бүгдийг эхний оролдлогоор зөв хийлээ.',
     wNow: 'Одоо бүгд зөв. Засах шаардлагатай болсон зүйлсээ дэвтэртээ бич.',
     wFix: 'Улаанаар тэмдэглэгдсэн хариултуудыг зас, дараа нь дахин шалга.',
     fixHead: 'Эдгээрийг засах шаардлага гарсан. Дэвтэртээ бич:',
     was: 'эхэндээ бичсэн: ', now: 'зөв: ',
-    nothing: 'Засах зүйл байхгүй — бүгдийг эхний оролдлогоор зөв хийжээ.',
+    nothing: 'Дэвтэрт бичих зүйл алга — сайн байна.',
     sending: 'Илгээж байна…', sent: 'Багшид илгээгдлээ ✓',
     sendFail: 'Илгээж чадсангүй — багшдаа хэл.',
     needName: 'Хуудасны дээд талд нэрээ бич, дараа нь Check my work-ийг дахин дар.'
